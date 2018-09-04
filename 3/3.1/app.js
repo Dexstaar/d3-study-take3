@@ -4,7 +4,7 @@ var el = d3.select('body')
     .selectAll('p')
     .data(dataset)
     .enter()
-    .append('p')
+    .append('div')
     .text('hello world');
     // .append('p')
     // .attr('class', 'foo')
