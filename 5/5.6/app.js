@@ -31,6 +31,14 @@ var y_scale = d3.scaleLinear()
     })])
     .range([chart_height - padding, padding]);
 
+// Clip Path
+svg.append('clipPath')
+    .attr('id', 'plot-area-clip-path')
+    .append('rect')
+    .attr('x', padding)
+    .attr('y', padding)
+    .attr('width', chart_width - padding * 3)
+    .attr('height', chart_height - padding * 2);
 
 // Create Axis
 var x_axis = d3.axisBottom(x_scale);
@@ -55,7 +63,10 @@ svg.append('g')
     .call(y_axis);
 
 // Create Circles
-svg.selectAll('circle')
+svg.append('g')
+    .attr('id', 'plot-area')
+    .attr('clip-path', 'url(#plot-area-clip-path)')
+    .selectAll('circle')
     .data(data)
     .enter()
     .append('circle')
@@ -87,16 +98,33 @@ d3.select('button').on('click', function () {
         return d[1];
     })]);
 
+    var colors = [
+        '#F26D6D', '#1E6190', '#7559D9', '#D1AB03'
+    ];
+    var color_index = Math.floor(
+        Math.random() * colors.length
+    );
+
     svg.selectAll('circle')
         .data(data)
         .transition()
         .duration(1000)
+        // .on('start', function() {
+        //     d3.select(this)
+        //         .attr('fill', '#F26D2D');
+        // })
         .attr("cx", function (d) {
             return x_scale(d[0]);
         })
         .attr("cy", function (d) {
             return y_scale(d[1]);
-        });
+        })
+        .transition()
+        .attr('fill', colors[color_index]);
+        // .on('end', function() {
+        //     d3.select(this)
+        //         .attr('fill', colors[color_index]);
+        // });
 
     // Update Axis
     svg.select('.x-axis')
